@@ -60,7 +60,7 @@ var options = {
     },
     run: function () {
       return [
-        ['compile:js']
+        ['compile:js', 'minify:js']
       ]
     }
   }

@@ -10,6 +10,7 @@
               figureEl,
               linkEl, linkL, linkM, linkS,
               sizeXL, sizeL, sizeM, sizeS,
+              titleData, descData, authorData,
               item;
 
           for(var i = 0; i < numNodes; i++) {
@@ -32,8 +33,24 @@
               sizeM = linkEl.getAttribute('data-m-size').split('x');
               sizeS = linkEl.getAttribute('data-s-size').split('x');
 
+              titleData = linkEl.getAttribute('data-title') || false;
+              descData = linkEl.getAttribute('data-desc') || false;
+              authorData = linkEl.getAttribute('data-author') || false;
+
+              // item.title doit être présent si l'on souhaite afficher
+              // d'autres infos en caption.
+              if (!titleData) {
+                if (descData || authorData) {
+                  titleData = ' ';
+                }
+              }
+
+
               // create slide object
               item = {
+                title: titleData,
+                desc: descData,
+                author: authorData,
                 xl: {
                   src: linkEl.getAttribute('href'),
                   w: parseInt(sizeXL[0], 10),
@@ -56,10 +73,10 @@
                 }
               };
 
-              if(figureEl.children.length > 1) {
-                  // <figcaption> content
-                  item.title = figureEl.children[1].innerHTML;
-              }
+              // if(figureEl.children.length > 1) {
+              //     // <figcaption> content
+              //     item.title = figureEl.children[1].innerHTML;
+              // }
 
               if(linkEl.children.length > 0) {
                   // <img> thumbnail element, retrieving thumbnail url
@@ -161,19 +178,36 @@
 
           // define options (if needed)
           options = {
+            // define gallery index (for URL)
+            galleryUID: galleryElement.getAttribute('data-pswp-uid'),
 
-              // define gallery index (for URL)
-              galleryUID: galleryElement.getAttribute('data-pswp-uid'),
+            getThumbBoundsFn: function(index) {
+              // See Options -> getThumbBoundsFn section of documentation for more info
+              var thumbnail = items[index].el.getElementsByTagName('img')[0], // find thumbnail
+                  pageYScroll = window.pageYOffset || document.documentElement.scrollTop,
+                  rect = thumbnail.getBoundingClientRect();
 
-              getThumbBoundsFn: function(index) {
-                  // See Options -> getThumbBoundsFn section of documentation for more info
-                  var thumbnail = items[index].el.getElementsByTagName('img')[0], // find thumbnail
-                      pageYScroll = window.pageYOffset || document.documentElement.scrollTop,
-                      rect = thumbnail.getBoundingClientRect();
+              return {x:rect.left, y:rect.top + pageYScroll, w:rect.width};
+            },
 
-                  return {x:rect.left, y:rect.top + pageYScroll, w:rect.width};
-              },
-              shareEl: false, // pas de partage
+            addCaptionHTMLFn: function(item, captionEl, isFake) {
+              // item      - slide object
+              // captionEl - caption DOM element
+              // isFake    - true when content is added to fake caption container
+              //             (used to get size of next or previous caption)
+
+              if(!item.title && !item.desc && !item.author) {
+                captionEl.children[0].innerHTML = '';
+                return false;
+              }
+              var captionTitle = (item.title) ? item.title + '<br/>' : '',
+                  captionDesc = (item.desc) ? item.desc + '<br/>' : '',
+                  captionAuthor = (item.author) ? '<small>' + item.author + '</small>' : '';
+              captionEl.children[0].innerHTML = captionTitle + captionDesc + captionAuthor;
+              return true;
+            },
+
+            shareEl: false, // pas de partage
 
           };
 
