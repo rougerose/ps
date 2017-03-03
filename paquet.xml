@@ -1,7 +1,7 @@
 <paquet
   prefix="ps"
   categorie="multimedia"
-  version="0.1.0"
+  version="0.1.1"
   etat="test"
   compatibilite="[3.1.0;3.1.*]"
   logo="prive/themes/spip/images/ps-32.png"
