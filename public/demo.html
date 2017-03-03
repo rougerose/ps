@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>démo photoswipe</title>
+    #INSERT_HEAD
+    <style media="screen">
+      figure {width: 50%;}
+    </style>
+  </head>
+  <body>
+    <div class="js-photoswipe">
+      <BOUCLE_ps(DOCUMENTS){extension=jpg}{0,5}{largeur>300}{statut in prop,publie}>
+
+      [(#REM)
+        <!--
+
+          Largeur des vignettes à afficher :
+
+          S: 300px
+          M: 410px
+          L: 470px
+          XL: 900px
+
+          Largeur des images plein écran :
+
+          S: 600px
+          M: 900px
+          L: 1024px
+          XL: 1600px
+
+        -->
+      ]
+        [(#LARGEUR|>{300}|?{
+          [(#SET{vignette_s, #FICHIER|image_reduire{300,0}|extraire_attribut{src}})]
+          ,
+          [(#SET{vignette_s, #FICHIER})]
+        })]
+        [(#LARGEUR|>{410}|?{
+          [(#SET{vignette_m, #FICHIER|image_reduire{410,0}|extraire_attribut{src}})]
+          ,
+          [(#SET{vignette_m, #FICHIER})]
+        })]
+        [(#LARGEUR|>{470}|?{
+          [(#SET{vignette_l, #FICHIER|image_reduire{470,0}|extraire_attribut{src}})]
+          ,
+          [(#SET{vignette_l, #FICHIER})]
+        })]
+        [(#LARGEUR|>{600}|?{
+          [(#SET{image_s, #FICHIER|image_reduire{600,0}|extraire_attribut{src}})]
+          ,
+          [(#SET{image_s, #FICHIER})]
+        })]
+        [(#LARGEUR|>{900}|?{
+          [(#SET{image_m, #FICHIER|image_reduire{900,0}|extraire_attribut{src}})]
+          ,
+          [(#SET{image_m, #FICHIER})]
+        })]
+        [(#LARGEUR|>{1024}|?{
+          [(#SET{image_l, #FICHIER|image_reduire{1024,0}|extraire_attribut{src}})]
+          ,
+          [(#SET{image_l, #FICHIER})]
+        })]
+        [(#LARGEUR|>{1600}|?{
+          [(#SET{image_xl, #FICHIER|image_reduire{1600,0}|extraire_attribut{src}})]
+          ,
+          [(#SET{image_xl, #FICHIER})]
+        })]
+
+        [(#SET{url, #URL_DOCUMENT})]
+        [(#SET{titre, #TITRE})]
+        [(#SET{desc, #DESCRIPTIF})]
+        [(#SET{alt, [(#TITRE|sinon{#DESCRIPTIF}|sinon{#FICHIER|basename}|supprimer_tags)]})]
+
+        <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+          <a href="#GET{image_xl}" itemprop="contentUrl" data-size="[(#GET{image_xl}|largeur)][x(#GET{image_xl}|hauteur)]" data-s="[(#GET{image_s})]" data-s-size="[(#GET{image_s}|largeur)][x(#GET{image_s}|hauteur)]" data-m="[(#GET{image_m})]" data-m-size="[(#GET{image_m}|largeur)][x(#GET{image_m}|hauteur)]" data-l="[(#GET{image_l})]" data-l-size="[(#GET{image_l}|largeur)][x(#GET{image_l}|hauteur)]">
+            <img src="
+              [(#GET{vignette_l})]
+            " srcset="
+              [(#GET{vignette_s})[ (#GET{vignette_s}|largeur)w]]
+              [(#GET{vignette_m}|=={#GET{vignette_s}}|non)[,(#GET{vignette_m})[ (#GET{vignette_m}|largeur)w]]]
+              [(#GET{vignette_l}|=={#GET{vignette_m}}|non)[,(#GET{vignette_l})[ (#GET{vignette_l}|largeur)w]]]
+              [(#GET{image_m}|=={#GET{vignette_m}}|non)[,(#GET{image_m})[ (#GET{image_m}|largeur)w]]]
+            " sizes="100vw" itemprop="thumbnail" alt="#GET{alt}" class="c-figure__img" />
+          </a>
+          [(#GET{titre}|ou{#GET{desc}}|oui)
+            <figcaption itemprop="caption">
+              [<h3 class="c-figure__title" itemprop="name">(#GET{titre})</h3>]
+              [<div class="c-figure__desc" itemprop="description">(#GET{desc})</div>]
+              <!-- crédits : <p class="c-figure__author" itemprop="author"></p> -->
+            </figcaption>
+          ]
+        </figure>
+      </BOUCLE_ps>
+    </div>
+    #MODELE{photoswipe}
+  </body>
+</html>
