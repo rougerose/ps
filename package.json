@@ -4,7 +4,9 @@
   "description": "plugin Spip PhotoSwipe",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "gulp",
+    "dev": "gulp dev",
+    "build": "NODE_ENV=production gulp build"
   },
   "repository": {
     "type": "git",
@@ -18,6 +20,9 @@
   },
   "homepage": "https://github.com/rougerose/ps#readme",
   "devDependencies": {
-    "gulp": "^4.0.2"
+    "del": "^6.0.0",
+    "gulp": "^4.0.2",
+    "rollup": "^2.61.1",
+    "rollup-plugin-terser": "^7.0.2"
   }
 }
