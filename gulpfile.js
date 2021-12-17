@@ -1,121 +1,59 @@
-// *************************************
-//
-// Gulpfile
-// (cf. https://github.com/drewbarontini/noise/blob/master/gulpfile.js)
-//
-// *************************************
-//
-// Available tasks:
-//  'gulp'
-//  'gulp watch'
-//  'gulp copy:lib'
-//  'gulp minify:js'
-//
-// *************************************
+const { gulp, src, dest, watch, series, parallel } = require("gulp");
+const config = require("./gulp.config.js");
+const del = require("del");
+const rollup = require("rollup");
+// const { nodeResolve } = require("@rollup/plugin-node-resolve");
+const { terser } = require("rollup-plugin-terser");
 
 
-"use strict";
+// Clean task
+const clean = function (done) {
+  // Make sure this feature is activated before running
+  if (!config.tasks.clean) return done();
 
+  del.sync(config.clean);
 
-// -------------------------------------
-// Plugins
-// -------------------------------------
-
-const gulp            = require("gulp");
-const uglify          = require("gulp-uglify");
-const rename          = require("gulp-rename");
-const pump            = require("pump");
-
-
-
-// -------------------------------------
-// Options
-// -------------------------------------
-
-var options = {
-
-  // ----- Default ----- //
-  default: {
-    tasks: ['compile:js']
-  },
-
-  // ----- Lib ----- //
-  lib: {
-    files: 'node_modules/photoswipe/dist/**/*',
-    destination: 'lib/photoswipe'
-  },
-
-  // ----- JS ----- //
-  js: {
-    file: '_src/js/photoswipe-init.js',
-    destination: 'js'
-  },
-
-  // ----- Watch ----- //
-  watch: {
-    files: function () {
-      return [
-        options.js.file
-      ]
-    },
-    run: function () {
-      return [
-        ['compile:js', 'minify:js']
-      ]
-    }
-  }
+  // Signal completion
+  return done();
 };
 
+// Scripts task
+const js = function (done) {
+  // Make sure this feature is activated before running
+  if (!config.tasks.js) return done();
 
-// -------------------------------------
-// Task : default
-// -------------------------------------
+  return rollup
+    .rollup({
+      input: config.js.src + "/init.js",
+      plugins: [
+        // nodeResolve(),
+        process.env.NODE_ENV === "production" && terser(),
+      ],
+    })
+    .then((bundle) => {
+      return bundle.write({
+        file: config.js.dest + "/" + config.js.name,
+        format: "iife",
+      });
+    });
+};
 
-gulp.task( 'default', options.default.tasks );
+// Watch for changes
+const watchSource = function (done) {
+  watch(config.js.src + "/**/*.js", series(js));
 
+  // Signal completion
+  done();
+};
 
-// -------------------------------------
-// Task: copy:lib
-// -------------------------------------
+// Default task = dev + watch
+exports.default = series(clean, js, watchSource);
 
-gulp.task( 'copy:lib', function () {
-  gulp.src( options.lib.files )
-    .pipe( gulp.dest(options.lib.destination) )
-});
+// Clean task
+exports.clean = clean;
 
+// Dev task
+exports.dev = series(clean, js);
 
-// -------------------------------------
-// Task: compile:js
-// -------------------------------------
-
-gulp.task( 'compile:js', function () {
-  gulp.src( options.js.file )
-    .pipe( gulp.dest(options.js.destination) )
-});
-
-
-// -------------------------------------
-// Task : minify:js
-// -------------------------------------
-
-gulp.task('minify:js', function (cb) {
-  pump([
-        gulp.src( options.js.file ),
-        uglify(),
-        rename( {suffix: '.min' }),
-        gulp.dest( options.js.destination )
-    ],
-    cb
-  );
-});
-
-// -------------------------------------
-// Task : watch
-// -------------------------------------
-
-gulp.task('watch', function() {
-  var watchFiles = options.watch.files();
-  watchFiles.forEach( function( files, index ) {
-    gulp.watch( files, options.watch.run()[ index ]  );
-  });
-});
+// Build task
+exports.build = series(clean, js);
