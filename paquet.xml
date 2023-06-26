@@ -1,12 +1,12 @@
 <paquet
   prefix="ps"
   categorie="multimedia"
-  version="0.1.3"
+  version="0.1.4"
   etat="test"
-  compatibilite="[3.1.0;3.2.*]"
+  compatibilite="[3.1.0;4.2.*]"
   logo="prive/themes/spip/images/ps-32.png"
 >
-  <nom>PhotoSwipe</nom>
+  <nom>PhotoSwipe Lahumière version 4.2</nom>
   <!-- Fork du plugin Spip PhotoSwipe -->
 
   <auteur lien="http://photoswipe.com/">PhotoSwipe</auteur>
