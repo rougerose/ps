@@ -13,8 +13,9 @@ function ps_insert_head_css($flux) {
 }
 
 function ps_insert_head($flux) {
-	$flux .= '<script src="' . find_in_path('lib/photoswipe/photoswipe.min.js') . '" defer></script>';
-	$flux .= '<script src="' . find_in_path('lib/photoswipe/photoswipe-ui-default.min.js') . '" defer></script>';
-	$flux .= '<script src="' . find_in_path('js/photoswipe-init.min.js') . '" defer></script>';
+	$flux .= '<script src="' . find_in_path('lib/photoswipe/photoswipe.min.js') . '"></script>';
+	$flux .= '<script src="' . find_in_path('lib/photoswipe/photoswipe-ui-default.min.js') . '"></script>';
+	// Activation du script depuis le plugin Lahumiere/head_js/dist.html
+	// $flux .= '<script src="' . find_in_path('js/photoswipe-init.min.js') . '" defe></script>';
 	return $flux;
 }
