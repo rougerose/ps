@@ -3,10 +3,10 @@
   categorie="multimedia"
   version="0.1.4"
   etat="test"
-  compatibilite="[3.1.0;4.2.*]"
+  compatibilite="[3.1.0;4.4.*]"
   logo="prive/themes/spip/images/ps-32.png"
 >
-  <nom>PhotoSwipe Lahumière version 4.2</nom>
+  <nom>PhotoSwipe Lahumière version 4.X</nom>
   <!-- Fork du plugin Spip PhotoSwipe -->
 
   <auteur lien="http://photoswipe.com/">PhotoSwipe</auteur>
